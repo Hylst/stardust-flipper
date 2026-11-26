@@ -65,7 +65,7 @@ export default function App() {
 
   // Game state
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(() => Number(localStorage.getItem('pin87_hs') || 125400));
+  const [highScore, setHighScore] = useState(() => Number(localStorage.getItem('pin87_hs') ?? 0) || 0);
   const [ballsLeft, setBallsLeft] = useState(3);
   const [ballInPlay, setBallInPlay] = useState(0);
   const [multiplier, setMultiplier] = useState(1);

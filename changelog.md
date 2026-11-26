@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 1.0.1 - 2026-11-26
+
+- Record initial remis à zéro : plus de faux score de 125 400 points avant la première partie. Un enregistrement existant est conservé.
+
 ## 1.0.0 - 2026-11-26
 
 - Import de la variante `retro-pinball-machine-development (1).zip`.
