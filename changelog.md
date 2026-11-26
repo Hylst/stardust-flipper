@@ -9,3 +9,7 @@
 - Titre publié en français : Flipper Stardust '87.
 - Textes visibles traduits : départ, partie terminée, plongeur.
 - Licence AGPL-3.0-or-later et README de publication.
+
+## 1.0.1 - 2026-11-26
+
+- Remplacement des tirets cadratins visibles dans les contrôles, les astuces et la signature par des deux-points ou des virgules.

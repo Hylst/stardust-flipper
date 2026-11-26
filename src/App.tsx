@@ -1119,11 +1119,11 @@ export default function App() {
             <div className="mt-4 rounded-[22px] border border-white/[0.09] bg-zinc-950/40 px-5 py-4 text-[12.5px] text-zinc-300">
               <b className="text-zinc-200">Contrôles</b>
               <div className="mt-2 space-y-1.5" style={{ fontFamily: `"Fragment Mono", monospace`}}>
-                <div>Flipper gauche — <span className="text-zinc-100">← / A / Z / Q</span></div>
-                <div>Flipper droit — <span className="text-zinc-100">→ / D</span></div>
-                <div>Plongeur / Lancer — <span className="text-zinc-100">Maintenir Espace / ↓</span></div>
-                <div>Clic / Touche sur les boutons — <span className="text-zinc-100">Souris / Tactile</span></div>
-                <div>Nouvelle partie — <span className="text-zinc-100">N</span></div>
+                <div>Flipper gauche : <span className="text-zinc-100">← / A / Z / Q</span></div>
+                <div>Flipper droit : <span className="text-zinc-100">→ / D</span></div>
+                <div>Plongeur / Lancer : <span className="text-zinc-100">Maintenir Espace / ↓</span></div>
+                <div>Clic / Touche sur les boutons : <span className="text-zinc-100">Souris / Tactile</span></div>
+                <div>Nouvelle partie : <span className="text-zinc-100">N</span></div>
               </div>
 
               <div className="mt-3 text-[11px] text-zinc-400" style={{ fontFamily: `"Fragment Mono", monospace`}}>
@@ -1190,7 +1190,7 @@ export default function App() {
               </button>
 
               <div className="mt-2 text-[11px] text-zinc-400 text-center" style={{ fontFamily: `"Fragment Mono", monospace`}}>
-                Clics souris, doigts ou clavier — tous les contrôles fonctionnent.
+                Clics souris, doigts ou clavier : tous les contrôles fonctionnent.
               </div>
             </div>
           </div>
@@ -1303,14 +1303,14 @@ export default function App() {
                   <li>Piéger la bille : maintenez le flipper en haut.</li>
                   <li>La « prise vive » adoucit les retours rapides.</li>
                   <li>Passe-postes : rebond sur les piliers intérieurs.</li>
-                  <li>Petits coups secs pour les ajustements — tilt désactivé.</li>
+                  <li>Petits coups secs pour les ajustements, tilt désactivé.</li>
                 </ul>
               </div>
             </div>
 
             <div className="mt-4 rounded-[22px] border border-amber-300/18 bg-amber-300/[0.065] text-amber-100 px-4 py-4 text-[12.5px]">
               <b>Notes du créateur :</b> Flipper Stardust est un hommage aux flippers widebody de la fin des années 80 : bumpers aveuglants, slingshots agressifs, et un multiboule à 3 billes qui transforme toute la table en jackpot. Course au score, gardez le multiplicateur en vie !
-              <div className="mt-2 text-[11px] text-amber-200/80" style={{ fontFamily: `"Fragment Mono", monospace`}}>— Geoffroy Streit, avec IA</div>
+              <div className="mt-2 text-[11px] text-amber-200/80" style={{ fontFamily: `"Fragment Mono", monospace`}}>Geoffroy Streit, avec IA</div>
             </div>
           </div>
         </div>
