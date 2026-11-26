@@ -16,6 +16,8 @@ const PLUNGER_X_MID   = (PLUNGER_X_LEFT + PLUNGER_X_RIGHT) / 2;
 const PLUNGER_TOP     = 62;   // y where the inner wall stops → ball exits
 const PLUNGER_SPRING_Y = TABLE_H - 42;   // center of spring plate rectangle
 const PLUNGER_BALL_SPAWN_Y = PLUNGER_SPRING_Y - 5 - BALL_RADIUS; // sits on top face of spring
+const PLUNGER_EXIT_X = 385;
+const PLUNGER_EXIT_Y = 110;
 
 // Physics scaling
 const GRAVITY = 0.95;
@@ -137,11 +139,12 @@ export default function App() {
     const wallOpts = { isStatic: true, restitution: 0.30, friction: 0.04, render:{visible:false} };
 
     const railLeft = Matter.Bodies.rectangle(16, TABLE_H/2, 30, TABLE_H, { ...wallOpts, label:'rail' });
-    const railRight = Matter.Bodies.rectangle(TABLE_W-16, TABLE_H/2, 30, TABLE_H, { ...wallOpts, label:'rail' });
+    // Le mur droit du plateau est porte par plungerRightWall : railRight
+    // debordait dans la rampe et bloquait chaque lancement.
     const topBand = Matter.Bodies.rectangle(TABLE_W/2, 34, 330, 28, { ...wallOpts, chamfer:{radius:10} });
     const topLeftCurve = Matter.Bodies.circle(93, 88, 54, { ...wallOpts });
-    // Keep the upper-right table curve away from the launch tube. The previous
-    // large circle overlapped the plunger lane and blocked every launch.
+    // Courbe superieure droite, gardee a gauche de la rampe. Les vrais
+    // bloqueurs etaient railRight et orbitR, tous deux retires de la rampe.
     const topRightCurve = Matter.Bodies.circle(TABLE_W-122, 92, 34, { ...wallOpts });
 
     // === PLUNGER LANE TUBE ===
@@ -210,7 +213,7 @@ export default function App() {
     });
 
     const orbitL = Matter.Bodies.rectangle(47, 200, 14, 86, { isStatic:true, angle:-0.13, restitution:0.4, label:'orbit' });
-    const orbitR = Matter.Bodies.rectangle(TABLE_W-47, 200, 14, 86, { isStatic:true, angle:0.13, restitution:0.4, label:'orbit' });
+    const orbitR = Matter.Bodies.rectangle(TABLE_W-92, 200, 14, 86, { isStatic:true, angle:0.13, restitution:0.4, label:'orbit' });
 
     const drain = Matter.Bodies.rectangle(TABLE_W/2, TABLE_H+28, 310, 50, { isStatic:true, isSensor:true, label:'drain' });
 
@@ -232,7 +235,7 @@ export default function App() {
     rightFlipperRef.current = rightFlipper;
 
     Matter.World.add(world, [
-      railLeft, railRight, topBand, topLeftCurve, topRightCurve,
+      railLeft, topBand, topLeftCurve, topRightCurve,
       plungerRightWall, plungerLeftWall, plungerExit, plungerSpringPlate,
       leftGuide, rightGuide,
       outLeftPost, outRightPost, inLeftPost, inRightPost,
@@ -309,7 +312,7 @@ export default function App() {
         if (ol === 'plungerExit') {
           // The shooter lane is deliberately clear: this sensor feeds the ball
           // into the upper-right playfield with a reliable, readable trajectory.
-          Matter.Body.setPosition(ballBody, { x: 372, y: 86 });
+          Matter.Body.setPosition(ballBody, { x: PLUNGER_EXIT_X, y: PLUNGER_EXIT_Y });
           Matter.Body.setVelocity(ballBody, { x: -9.5, y: 2.1 });
           Matter.Body.setAngularVelocity(ballBody, -0.22);
           setLastMessage('LANCEMENT RÉUSSI • BILLE SUR LE PLATEAU');
@@ -357,7 +360,7 @@ export default function App() {
         // Robust shooter-lane feed: even if the fast launch skips the sensor
         // in one physics tick, a top-of-tube position check releases it cleanly.
         if (ball.position.x > PLUNGER_X_LEFT && ball.position.y < PLUNGER_TOP + 8 && v.y < -4) {
-          Matter.Body.setPosition(ball, { x: 372, y: 86 });
+          Matter.Body.setPosition(ball, { x: PLUNGER_EXIT_X, y: PLUNGER_EXIT_Y });
           Matter.Body.setVelocity(ball, { x: -9.5, y: 2.1 });
           Matter.Body.setAngularVelocity(ball, -0.22);
           setLastMessage('LANCEMENT RÉUSSI • BILLE SUR LE PLATEAU');
@@ -425,7 +428,11 @@ export default function App() {
   };
 
   const launchPlunger = (power:number) => {
-    const b = plungerBallRef.current;
+    let b = plungerBallRef.current;
+    if (!b) {
+      b = ballsRef.current.find(ball => ball.position.x > PLUNGER_X_LEFT && ball.position.y > PLUNGER_TOP + 40) ?? null;
+      if (b) plungerBallRef.current = b;
+    }
     if (!b) return;
     // Determine launch speed: full power gets MAX, weak tap still reaches top
     const vy = PLUNGER_MIN_LAUNCH + power * (PLUNGER_MAX_LAUNCH - PLUNGER_MIN_LAUNCH);
@@ -535,7 +542,7 @@ export default function App() {
         const pwr = plungerChargeRef.current;
         plungerChargeRef.current = 0;
         keysRef.current.plunger = false;
-        if (plungerBallRef.current) launchPlunger(Math.max(0.3, pwr));
+        launchPlunger(Math.max(0.3, pwr));
       } else {
         keysRef.current.plunger = false;
       }
@@ -671,7 +678,7 @@ export default function App() {
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(PLUNGER_X_LEFT + 3, PLUNGER_TOP - 2);
-      ctx.bezierCurveTo(390, 70, 380, 82, 372, 86);
+      ctx.bezierCurveTo(410, 70, 395, 95, PLUNGER_EXIT_X, PLUNGER_EXIT_Y);
       ctx.stroke();
       ctx.lineCap = 'butt';
       ctx.fillStyle = 'rgba(126,245,255,0.7)';
@@ -815,7 +822,7 @@ export default function App() {
 
       // Kickback rubber arc (right side)
       ctx.beginPath();
-      ctx.arc(W - 70, 200, 38, Math.PI - 3.2, Math.PI - 1.6);
+      ctx.arc(W - 92, 200, 38, Math.PI - 3.2, Math.PI - 1.6);
       ctx.stroke();
       ctx.lineCap = 'butt';
 
@@ -1042,9 +1049,9 @@ export default function App() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3 sm:gap-5 text-[11px]" style={{ fontFamily: `"Fragment Mono", monospace` }}>
-            <div className="px-3.5 py-2 rounded-full bg-white/[0.059] border border-white/[0.12] text-zinc-300">60 IPS • PHYSIQUE MATTER.JS</div>
+            <div className="px-3.5 py-2 rounded-full bg-white/[0.059] border border-white/[0.12] text-zinc-300">60 HZ • PHYSIQUE MATTER.JS</div>
             <div className="px-3.5 py-2 rounded-full bg-white/[0.059] border border-white/[0.12] text-zinc-300">CABINET SHAKE</div>
-            <div className="px-3.5 py-2 rounded-full bg-white/[0.059] border border-white/[0.12] text-zinc-300">FLIPPERS ANALOGIQUES</div>
+            <div className="px-3.5 py-2 rounded-full bg-white/[0.059] border border-white/[0.12] text-zinc-300">FLIPPERS PHYSIQUES</div>
           </div>
         </div>
 
@@ -1160,8 +1167,8 @@ export default function App() {
                     const p=plungerChargeRef.current;
                     plungerChargeRef.current=0;
                     keysRef.current.plunger=false;
-                    if(plungerBallRef.current) launchPlunger(Math.max(0.3, p));
-                    else if(!started) startGame();
+                    launchPlunger(Math.max(0.3, p));
+                    if(!started) startGame();
                   }
                 }}
                 onMouseLeave={(e)=>{
@@ -1170,7 +1177,7 @@ export default function App() {
                     const p=plungerChargeRef.current;
                     plungerChargeRef.current=0;
                     keysRef.current.plunger=false;
-                    if(plungerBallRef.current) launchPlunger(Math.max(0.3, p));
+                    launchPlunger(Math.max(0.3, p));
                   }
                 }}
                 onTouchStart={(e)=>{e.preventDefault(); keysRef.current.plunger=true; getAudio();}}
@@ -1180,8 +1187,8 @@ export default function App() {
                     const p=plungerChargeRef.current;
                     plungerChargeRef.current=0;
                     keysRef.current.plunger=false;
-                    if(plungerBallRef.current) launchPlunger(Math.max(0.3, p));
-                    else if(!started) startGame();
+                    launchPlunger(Math.max(0.3, p));
+                    if(!started) startGame();
                   }
                 }}
                 onContextMenu={(e)=>e.preventDefault()}
@@ -1234,7 +1241,7 @@ export default function App() {
                       >
                         COMMENCER • ESPACE
                       </button>
-                      <div className="mt-3 text-[11px] text-zinc-400" style={{ fontFamily:`"Fragment Mono", monospace`}}>3 BILLES • JACKPOT MULTIBOULE • FLIPPERS ANALOGIQUES</div>
+                      <div className="mt-3 text-[11px] text-zinc-400" style={{ fontFamily:`"Fragment Mono", monospace`}}>3 BILLES • JACKPOT MULTIBOULE • FLIPPERS PHYSIQUES</div>
                     </div>
                   </div>
                 )}
@@ -1324,7 +1331,7 @@ export default function App() {
           >◂ GAUCHE</button>
           <button
             onPointerDown={(e)=>{e.preventDefault(); keysRef.current.plunger=true; getAudio();}}
-            onPointerUp={(e)=>{e.preventDefault(); if(keysRef.current.plunger){ const p=plungerChargeRef.current; plungerChargeRef.current=0; keysRef.current.plunger=false; if(plungerBallRef.current) launchPlunger(Math.max(0.3, p)); else if(!started) startGame(); }}}
+            onPointerUp={(e)=>{e.preventDefault(); if(keysRef.current.plunger){ const p=plungerChargeRef.current; plungerChargeRef.current=0; keysRef.current.plunger=false; launchPlunger(Math.max(0.3, p)); if(!started) startGame(); }}}
             onPointerLeave={()=>{keysRef.current.plunger=false;}}
             onPointerCancel={()=>{keysRef.current.plunger=false;}}
           >⤴ LANCER</button>
