@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 1.0.3 - 2026-11-26
+
+- Fin de partie : le bouton « Rejouer » relance une partie. Le garde-fou sur `started` bloquait la relance ; le score courant repart à zéro et le record est conservé.
+- Vérification : trois billes lancées puis perdues, écran de fin, relance et score à zéro.
+- Image Open Graph, capture de documentation et vignette rafraîchies.
+
 ## 1.0.2 - 2026-11-26
 
 - Rampe de lancement dégagée : le mur droit `railRight` et l'orbite droite empiétaient sur le tube du plongeur. La bille montait puis retombait sans sortir.

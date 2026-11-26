@@ -1003,7 +1003,9 @@ export default function App() {
   const jackpotPct = Math.min(100, Math.round((jackpotCount/22)*100));
 
   const startGame = () => {
-    if (started) return;
+    // Autorise la relance depuis l'ecran de fin de partie. Pendant une
+    // partie en cours, le garde-fou evite de reinitialiser le score.
+    if (started && !gameOver) return;
     setStarted(true);
     setGameOver(false);
     setScore(0); scoreRef.current=0;
