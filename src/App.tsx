@@ -563,19 +563,7 @@ export default function App() {
         e.preventDefault();
       }
       if (k === 'n' && gameOver) {
-        ballsRef.current.forEach(b=> worldRef.current && Matter.World.remove(worldRef.current, b));
-        ballsRef.current = [];
-        scoreRef.current = 0; setScore(0);
-        setMultiplier(1); multiplierRef.current = 1;
-        setBallsLeft(3); setBallInPlay(0);
-        setMultiball(false); multiballRef.current=false;
-        bumpersRef.current.forEach(b=>{b.hits=0; b.flash=0});
-        lanesRef.current.forEach(l=>{l.lit=false; l.flash=0});
-        setJackpotCount(0);
-        setGameOver(false);
-        setStarted(true);
-        setLastMessage('NOUVELLE PARTIE • LANCEMENT');
-        setTimeout(()=>spawnBall(true), 220);
+        startGame();
       }
       // Also: Space on start screen -> start game
       if (k === ' ' && !started) {
@@ -1006,14 +994,20 @@ export default function App() {
     // Autorise la relance depuis l'ecran de fin de partie. Pendant une
     // partie en cours, le garde-fou evite de reinitialiser le score.
     if (started && !gameOver) return;
+    ballsRef.current.forEach(b => { if (worldRef.current) Matter.World.remove(worldRef.current, b); });
+    ballsRef.current = [];
+    plungerBallRef.current = null;
     setStarted(true);
     setGameOver(false);
     setScore(0); scoreRef.current=0;
-    setBallsLeft(3);
+    setBallsLeft(3); setBallInPlay(0);
     setMultiplier(1); multiplierRef.current=1;
-    bumpersRef.current.forEach(b=>{b.hits=0});
-    lanesRef.current.forEach(l=>{l.lit=false});
+    setMultiball(false); multiballRef.current=false; setMultiballTime(0);
+    bumpersRef.current.forEach(b=>{b.hits=0; b.flash=0;});
+    lanesRef.current.forEach(l=>{l.lit=false; l.flash=0;});
     setJackpotCount(0);
+    shakeRef.current = 0;
+    flashTableRef.current = 0;
     setTimeout(()=>spawnBall(true), 160);
     setLastMessage('TIREZ LE PLONGEUR • ESPACE');
     getAudio();
@@ -1262,7 +1256,7 @@ export default function App() {
               <div className="mt-[14px] rounded-[16px] border border-white/[0.09] bg-[#12141e]/90 px-4 py-[11px] flex items-center justify-between text-[11px] text-zinc-300" style={{ fontFamily:`"Fragment Mono", monospace`}}>
                 <span>FLIPPER STARDUST • G.STREIT 2026</span>
                 <span className="text-zinc-400">CRÉDITS 0 • JEU LIBRE</span>
-                <span className="text-zinc-400">TILT 0/3</span>
+                <span className="text-zinc-400">TILT DÉSACTIVÉ</span>
               </div>
             </div>
           </div>
@@ -1312,7 +1306,7 @@ export default function App() {
                   <li>Piéger la bille : maintenez le flipper en haut.</li>
                   <li>La « prise vive » adoucit les retours rapides.</li>
                   <li>Passe-postes : rebond sur les piliers intérieurs.</li>
-                  <li>Petits coups secs pour les ajustements, tilt désactivé.</li>
+                  <li>Tilt désactivé : aucune secousse à gérer.</li>
                 </ul>
               </div>
             </div>

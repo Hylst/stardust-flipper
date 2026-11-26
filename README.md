@@ -22,6 +22,7 @@ Joue ici : [games.hylst.fr/stardust-flipper/](https://games.hylst.fr/stardust-fl
 - Trois billes, jackpot multiboule et multiplicateur jusqu'à 6x.
 - Écran de fin avec bouton Rejouer : le score courant repart à zéro, le record est conservé.
 - Bumpers, voies de passage, cibles tombantes, slingshots et orbites.
+- Tilt désactivé : aucune secousse à gérer.
 - Physique Matter.js à 60 images par seconde.
 - Secousse du cabinet et effets sonores synthétisés.
 - Record local conservé sous la clé `pin87_hs`.

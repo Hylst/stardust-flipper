@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 1.0.4 - 2026-11-27
+
+- Interface : le pied de page affiche « TILT DÉSACTIVÉ » au lieu de « TILT 0/3 », qui suggérait une mécanique absente. L'aide ne promet plus de petits coups secs.
+- Relance : `startGame` retire les billes restantes et remet à zéro multiplicateur, multiboule, compteurs de bumpers, voies, secousse et flash. La touche N appelle la même fonction que le bouton Rejouer.
+- Vérification : touche N et bouton Rejouer, trois billes, score à zéro, record conservé après rechargement.
+
 ## 1.0.3 - 2026-11-26
 
 - Fin de partie : le bouton « Rejouer » relance une partie. Le garde-fou sur `started` bloquait la relance ; le score courant repart à zéro et le record est conservé.
